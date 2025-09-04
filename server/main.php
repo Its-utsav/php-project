@@ -20,4 +20,27 @@ if (isset($_POST['register'])) {
     } else {
         echo "Failed to insert records " . mysqli_error($conn);
     }
+} else if (isset($_POST['login'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $user_id = -1;
+
+    $q = "SELECT * FROM users WHERE email = '$email' AND password ='$password'";
+    $result =  mysqli_query($conn, $q);
+
+    if ($result) {
+        if (mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_array($result);
+            var_dump($row);
+            $user_id = $row['id'];
+
+            echo "Login successfully redirect to home page";
+
+            $_SESSION['user_id'] = $user_id;
+            redirect("../users/competition.php");
+        }
+    } else {
+        echo "Failed to insert records " . mysqli_error($conn);
+    }
 }
