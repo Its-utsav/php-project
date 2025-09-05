@@ -1,7 +1,7 @@
 <?php
 require("../config/db.php");
 require("../includes/functions.php");
-
+session_start();
 
 if (isset($_POST['register'])) {
 
@@ -32,15 +32,19 @@ if (isset($_POST['register'])) {
     if ($result) {
         if (mysqli_num_rows($result) > 0) {
             $row = mysqli_fetch_array($result);
-            var_dump($row);
+
             $user_id = $row['id'];
 
-            echo "Login successfully redirect to home page";
+            echo "Login successfully redirect to competition page";
 
             $_SESSION['user_id'] = $user_id;
+
             redirect("../users/competition.php");
         }
     } else {
         echo "Failed to insert records " . mysqli_error($conn);
     }
+} elseif (isset($_GET['logout'])) {
+    unset($_SESSION['user_id']);
+    redirect("/college-competition-portal/index.php", 0);
 }

@@ -3,8 +3,8 @@ include("../includes/header.php");
 ?>
 
 <div class="container">
-  <h1 class="text-center">Login Page</h1>
-  <form id="form" action="../server/main.php" method="POST">
+  <h1 class="text-center">Login as <b>admin</b></h1>
+  <form id="form" action="../server/admin.php" method="POST">
     <!-- email -->
     <div class="form-group">
       <label for="email">Email:</label>
@@ -29,7 +29,7 @@ include("../includes/header.php");
         placeholder="Enter Password" />
       <p id="passwarn" class="invalid-feedback" style="display: none"></p>
     </div>
-    <input type="hidden" name="login" value="true" />
+    <input type="hidden" name="admin-login" value="true" />
     <!-- button -->
     <div class="form-group">
       <button name="login" type="submit" class="btn btn-primary">Login</button>
@@ -78,3 +78,7 @@ include("../includes/header.php");
     }
   });
 </script>
+
+<?php
+include("../includes/footer.php");
+?>

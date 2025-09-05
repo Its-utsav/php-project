@@ -18,27 +18,51 @@ session_start();
             <li class="m-2">
               <a href="/college-competition-portal" class="btn btn-outline-primary  py-2">Home</a>
             </li>
-            <li class="m-2">
-              <a href="/college-competition-portal/users/competition.php" class="btn btn-outline-primary  py-2">Competitions</a>
-            </li>
-            <?php
-            if (!isset($_SESSION['user_id'])):
-            ?>
+
+            <?php if (!isset($_SESSION['admin_email'])): ?>
               <li class="m-2">
-                <a href="/college-competition-portal/auth/register.php" class="btn btn-outline-primary  py-2">Register</a>
+                <a href="/college-competition-portal/users/competition.php" class="btn btn-outline-primary  py-2">Competitions</a>
               </li>
-              <li class="m-2">
-                <a href="/college-competition-portal/auth/login.php" class="btn btn-outline-primary  py-2">Login</a>
-              </li>
-            <?php else: ?>
-              <h1>Wow</h1>
             <?php endif; ?>
+
             <li class="m-2">
               <a href="/college-competition-portal/about.php" class="btn btn-outline-primary  py-2">About</a>
             </li>
             <li class="m-2">
               <a href="/college-competition-portal/sponsors.php" class="btn btn-outline-primary  py-2">Sponsors</a>
             </li>
+
+            <?php if (isset($_SESSION['admin_email'])): ?>
+              <li class="m-2">
+                <a href="/college-competition-portal/admin/competition-form.php" class="btn btn-outline-primary py-2">Add Competitions</a>
+              </li>
+              <li class="m-2">
+                <a href="/college-competition-portal/admin/view-competition.php" class="btn btn-outline-primary py-2">See Competitions</a>
+              </li>
+              <li class="m-2">
+                <a href="/college-competition-portal/admin/view-users.php" class="btn btn-outline-primary  py-2">View Users</a>
+              </li>
+              <li class="m-2">
+                <a href="/college-competition-portal/server/admin.php?logout=true" class="btn btn-outline-primary py-2">Logout</a>
+              </li>
+            <?php elseif (isset($_SESSION['user_id'])): ?>
+              <li class="m-2">
+                <a href="/college-competition-portal/users/dashboard.php" class="btn btn-outline-primary py-2">dashboard</a>
+              </li>
+              <li class="m-2">
+                <a href="/college-competition-portal/server/main.php?logout=true" class="btn btn-outline-primary py-2">Logout</a>
+              </li>
+            <?php else: ?>
+              <li class="m-2">
+                <a href="/college-competition-portal/auth/register.php" class="btn btn-outline-primary  py-2">Register</a>
+              </li>
+              <li class="m-2">
+                <a href="/college-competition-portal/auth/login.php" class="btn btn-outline-primary  py-2">Login</a>
+              </li>
+              <li class="m-2">
+                <a href="/college-competition-portal/admin/login.php" class="btn btn-outline-primary  py-2">Admin login</a>
+              </li>
+            <?php endif; ?>
 
           </ul>
         </div>
@@ -47,4 +71,4 @@ session_start();
   </header>
 
 
-  <main>
+  <main class="container">

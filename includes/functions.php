@@ -1,9 +1,10 @@
 <!-- contains command function which may be used multiple time  -->
 
 <?php
-function redirect($url)
+function redirect($url, $time = 2)
 {
-    header("Location: $url");
+    header("refresh:$time;url=$url");
+    return;
 }
 
 function isLoggedIn()
@@ -14,7 +15,14 @@ function isLoggedIn()
 function requireLogin()
 {
     if (!isLoggedIn()) {
-        redirect("/auth/login.php");
+        header("Location: /college-competition-portal/auth/login.php");
+    }
+}
+
+function requireAdminLogin()
+{
+    if (!isset($_SESSION['admin_email'])) {
+        header("Location: /college-competition-portal/admin/login.php");
     }
 }
 ?>
