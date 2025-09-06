@@ -97,80 +97,108 @@ include("../includes/header.php");
 </div>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    var form = document.getElementById("form");
+    const form = document.getElementById("form");
 
-    form.addEventListener("submit", validateForm);
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const phoneInput = document.getElementById("phoneNumber");
+    const passwordInput = document.getElementById("password");
+    const confirmInput = document.getElementById("confirm-password");
+    const genderInputs = document.getElementsByName("gender");
 
-    function validateForm(e) {
-      e.preventDefault();
+    const nameWarn = document.getElementById("namewarn");
+    const emailWarn = document.getElementById("emailwarn");
+    const phoneWarn = document.getElementById("phonewarn");
+    const passWarn = document.getElementById("passwarn");
+    const genderWarn = document.getElementById("genderwarn");
 
-      let valid = true;
+    // Regex for email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-      const nameWarn = document.getElementById("namewarn");
-      const name = document.getElementById("name").value;
+    nameInput.addEventListener("change", function() {
+      const name = nameInput.value.trim();
       if (!name || !isNaN(name)) {
         nameWarn.textContent = "Enter a valid name.";
         nameWarn.style.display = "block";
-        valid = false;
+        nameInput.classList.add("is-invalid");
       } else {
-        nameWarn.textContent = null;
         nameWarn.style.display = "none";
+        nameInput.classList.remove("is-invalid");
       }
+    });
 
-      const email = document.getElementById("email").value;
-      const emailWarn = document.getElementById("emailwarn");
-      const email_at = email.indexOf("@");
-      const email_dot = email.indexOf(".");
-      if (email_at < 1 || email_dot - email_at < 2) {
+    emailInput.addEventListener("change", function() {
+      const email = emailInput.value.trim();
+      if (!emailRegex.test(email)) {
         emailWarn.textContent = "Enter a valid email.";
         emailWarn.style.display = "block";
-        valid = false;
+        emailInput.classList.add("is-invalid");
       } else {
-        emailWarn.textContent = null;
         emailWarn.style.display = "none";
+        emailInput.classList.remove("is-invalid");
       }
+    });
 
-      const phoneWarn = document.getElementById("phonewarn");
-      const phoneNumber = document.getElementById("phoneNumber").value;
-
-      if (isNaN(phoneNumber) || phoneNumber.length != 10) {
+    phoneInput.addEventListener("change", function() {
+      const phone = phoneInput.value.trim();
+      if (!/^\d{10}$/.test(phone)) {
         phoneWarn.textContent = "Phone number must be 10 digits.";
         phoneWarn.style.display = "block";
-        valid = false;
+        phoneInput.classList.add("is-invalid");
       } else {
-        phoneWarn.textContent = null;
         phoneWarn.style.display = "none";
+        phoneInput.classList.remove("is-invalid");
       }
+    });
 
-      const password = document.getElementById("password").value;
-      const passWarn = document.getElementById("passwarn");
+    passwordInput.addEventListener("change", function() {
+      const password = passwordInput.value;
       if (password.length < 4) {
-        passWarn.textContent =
-          "Password must be at least 4 characters long.";
+        passWarn.textContent = "Password must be at least 4 characters long.";
         passWarn.style.display = "block";
-        valid = false;
+        passwordInput.classList.add("is-invalid");
       } else {
-        passWarn.textContent = null;
         passWarn.style.display = "none";
+        passwordInput.classList.remove("is-invalid");
       }
+    });
 
-      const genderWarn = document.getElementById("genderwarn");
-      const gender = document.getElementsByName("gender");
-      if (!gender[0].checked && !gender[1].checked) {
-        genderWarn.textContent = "Select a gender.";
-        genderWarn.style.display = "block";
-        valid = false;
+    confirmInput.addEventListener("change", function() {
+      const password = passwordInput.value;
+      const confirm = confirmInput.value;
+      if (password !== confirm) {
+        passWarn.textContent = "Passwords do not match.";
+        passWarn.style.display = "block";
+        confirmInput.classList.add("is-invalid");
       } else {
-        genderWarn.textContent = null;
-        genderWarn.style.display = "none";
+        passWarn.style.display = "none";
+        confirmInput.classList.remove("is-invalid");
       }
+    });
 
-      if (valid) {
-        this.submit();
-      }
-    }
+    genderInputs.forEach((input) => {
+      input.addEventListener("change", function() {
+        if (!genderInputs[0].checked && !genderInputs[1].checked) {
+          genderWarn.textContent = "Select a gender.";
+          genderWarn.style.display = "block";
+        } else {
+          genderWarn.style.display = "none";
+        }
+      });
+    });
+
+    // Optional: still validate on submit to prevent bypass
+    form.addEventListener("submit", function(e) {
+      let valid = true;
+
+      if (!nameInput.value.trim() || !isNaN(nameInput.value)) valid = false;
+      if (!emailRegex.test(emailInput.value.trim())) valid = false;
+      if (!/^\d{10}$/.test(phoneInput.value.trim())) valid = false;
+      if (passwordInput.value.length < 4) valid = false;
+      if (passwordInput.value !== confirmInput.value) valid = false;
+      if (!genderInputs[0].checked && !genderInputs[1].checked) valid = false;
+
+      if (!valid) e.preventDefault();
+    });
   });
 </script>
-</body>
-
-</html>

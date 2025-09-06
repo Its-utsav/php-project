@@ -13,7 +13,7 @@ include("includes/header.php");
         </p>
         <hr class="my-4" />
         <p>Explore our competitions and find the one that suits you best.</p>
-        <a class="btn btn-primary btn-lg" href="/college-competition-portal//users/competition.php" role="button">Explore Competitions</a>
+        <a class="btn btn-primary btn-lg" href="/college-competition-portal/users/competition.php" role="button">Explore Competitions</a>
     </div>
 </div>
 

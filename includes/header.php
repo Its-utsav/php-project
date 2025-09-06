@@ -28,9 +28,6 @@ session_start();
             <li class="m-2">
               <a href="/college-competition-portal/about.php" class="btn btn-outline-primary  py-2">About</a>
             </li>
-            <li class="m-2">
-              <a href="/college-competition-portal/sponsors.php" class="btn btn-outline-primary  py-2">Sponsors</a>
-            </li>
 
             <?php if (isset($_SESSION['admin_email'])): ?>
               <li class="m-2">

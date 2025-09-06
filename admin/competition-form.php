@@ -38,6 +38,7 @@ if (isset($_GET['competitionID'])) {
                 echo "value="  . htmlspecialchars($title);
             }
             ?>>
+        <p id="titlewarn" class="invalid-feedback" style="display: none"></p>
     </div>
     <div class="form-group">
         <label for="description">Description:</label>
@@ -48,6 +49,7 @@ if (isset($_GET['competitionID'])) {
             }
             ?>
             </textarea>
+        <p id="descwarn" class="invalid-feedback" style="display: none"></p>
     </div>
     <div class="form-group">
         <label for="date">Date:</label>
@@ -57,6 +59,7 @@ if (isset($_GET['competitionID'])) {
                 echo "value="  . htmlspecialchars($date);
             }
             ?>>
+        <p id="datewarn" class="invalid-feedback" style="display: none"></p>
     </div>
     <div class="form-group">
         <label for="time">Time:</label>
@@ -66,6 +69,7 @@ if (isset($_GET['competitionID'])) {
                 echo "value="  . htmlspecialchars($time);
             }
             ?>>
+        <p id="timewarn" class="invalid-feedback" style="display: none"></p>
     </div>
     <input type="hidden" value="true"
 
@@ -96,6 +100,76 @@ if (isset($_GET['competitionID'])) {
 <script>
     const minDate = new Date().toISOString().split('T')[0];
     document.getElementById("date").setAttribute('min', minDate);
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const titleInput = document.getElementById("title");
+        const descInput = document.getElementById("description");
+        const dateInput = document.getElementById("date");
+        const timeInput = document.getElementById("time");
+
+        const titleWarn = document.getElementById("titlewarn");
+        const descWarn = document.getElementById("descwarn");
+        const dateWarn = document.getElementById("datewarn");
+        const timeWarn = document.getElementById("timewarn");
+
+
+        const minDate = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', minDate);
+
+
+        titleInput.addEventListener("change", function() {
+            const title = titleInput.value.trim();
+            if (title.length < 3) {
+                titleWarn.textContent = "Title must be at least 3 characters.";
+                titleWarn.style.display = "block";
+                titleInput.classList.add("is-invalid");
+            } else {
+                titleWarn.style.display = "none";
+                titleInput.classList.remove("is-invalid");
+            }
+        });
+
+
+        descInput.addEventListener("change", function() {
+            const desc = descInput.value.trim();
+            if (desc.length < 5) {
+                descWarn.textContent = "Description must be at least 10 characters.";
+                descWarn.style.display = "block";
+                descInput.classList.add("is-invalid");
+            } else {
+                descWarn.style.display = "none";
+                descInput.classList.remove("is-invalid");
+            }
+        });
+
+
+        dateInput.addEventListener("change", function() {
+            const selectedDate = new Date(dateInput.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (selectedDate < today) {
+                dateWarn.textContent = "Date cannot be in the past.";
+                dateWarn.style.display = "block";
+                dateInput.classList.add("is-invalid");
+            } else {
+                dateWarn.style.display = "none";
+                dateInput.classList.remove("is-invalid");
+            }
+        });
+
+
+        timeInput.addEventListener("change", function() {
+            if (!timeInput.value) {
+                timeWarn.textContent = "Please select a time.";
+                timeWarn.style.display = "block";
+                timeInput.classList.add("is-invalid");
+            } else {
+                timeWarn.style.display = "none";
+                timeInput.classList.remove("is-invalid");
+            }
+        });
+    });
 </script>
 
 <?php
