@@ -17,8 +17,8 @@ requireLogin();
       while ($row = mysqli_fetch_array($result)) {
         echo "<div class='card mb-4'>
           <div class='card-body'>
-            <h4 class='card-title'>" . $row['title'] . "</h4>
-            <p class='card-text'>" . $row['description'] . "</p>
+            <h4 class='card-title'>" . htmlspecialchars($row['title']) . "</h4>
+            <p class='card-text'>" . htmlspecialchars($row['description']) . "</p>
           </div>
           <div class='card-footer'>
            <a href='/college-competition-portal/users/join_competition.php/?competitionID=" . $row['id'] . "' class='btn btn-primary' >Join</a>

@@ -1,10 +1,47 @@
 <?php
 include("../includes/header.php");
+require("../config/db.php");
+require("../includes/functions.php");
+$error_message = '';
+
+if (isset($_POST['login'])) {
+  $email = trim($_POST['email']);
+  $password = $_POST['password'];
+
+  if (empty($email) || empty($password)) {
+    $error_message = "Email and password are required.";
+  } else {
+    $q = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
+
+    $result = mysqli_query($conn, $q);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+
+      $row = mysqli_fetch_array($result);
+      $_SESSION['user_id'] = $row['id'];
+      echo "Login successfully. Redirecting to competition page...";
+      redirect("../users/competition.php");
+      exit();
+    } else {
+      $error_message = "Invalid email or password.";
+    }
+  }
+}
 ?>
 
 <div class="container">
   <h1 class="text-center">Login Page</h1>
-  <form id="form" action="../server/main.php" method="POST">
+  <?php
+
+  if (!empty($error_message)) :
+  ?>
+    <div class="alert alert-danger" role="alert">
+      <?php echo htmlspecialchars($error_message); ?>
+    </div>
+  <?php endif; ?>
+
+  <!-- <form id="form" action="../server/main.php" method="POST"> -->
+  <form id="form" action="" method="POST"> <!--  IP phase-->
     <!-- email -->
     <div class="form-group">
       <label for="email">Email:</label>

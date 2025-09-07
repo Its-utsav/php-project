@@ -23,15 +23,14 @@ requireAdminLogin();
           </div>
           <div class='card-footer'>
         
-          <a href='/college-competition-portal/admin/competition-form.php/?competitionID=" . $row['id'] . "' class='btn btn-primary' >Update</a>
-          <a href='/college-competition-portal/admin/view-participants.php/?competitionID=" . $row['id'] . "' class='btn btn-primary' >View participants</a>
+          <a href='/college-competition-portal/admin/competition-form.php/?competitionID=" . htmlspecialchars($row['id']) . "' class='btn btn-primary' >Update</a>
+          <a href='/college-competition-portal/admin/view-participants.php/?competitionID=" . htmlspecialchars($row['id']) . "' class='btn btn-primary' >View participants</a>
          
           </div>
         </div>";
       }
     }
-    //  // see participant
-    // <a href='register.html' class='btn btn-primary'>Participate</a>
+    
   } else {
     echo "Failed to fetch records " . mysqli_error($conn);
   }

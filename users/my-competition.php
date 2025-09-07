@@ -30,10 +30,10 @@ requireLogin();
           while ($row = mysqli_fetch_array($result)) {
 
             echo "<tr>
-                    <td>" . $row['title'] . "</td>
-                    <td>" . $row['date'] . "</td>
-                    <td>" . $row['time'] . "</td>
-                    <td>" . $row['created_at'] . "</td>    
+                    <td>" . htmlspecialchars($row['title']) . "</td>
+                    <td>" . htmlspecialchars($row['date']) . "</td>
+                    <td>" . htmlspecialchars($row['time']) . "</td>
+                    <td>" . htmlspecialchars($row['created_at']) . "</td>    
                   </tr>";
           }
         }
