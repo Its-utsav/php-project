@@ -3,8 +3,22 @@ require("../config/db.php");
 include("../includes/header.php");
 include("../includes/functions.php");
 requireAdminLogin();
+if (!isset($_GET['competitionID']) || !is_numeric($_GET['competitionID'])) {
+    die("Error: Invalid or missing Competition ID.");
+}
+$competitionID = (int)$_GET['competitionID'];
+$title_query = "SELECT title FROM competitions WHERE id = $competitionID";
+$title_result = mysqli_query($conn, $title_query);
+$competition_title = "Participants";
+if ($title_row = mysqli_fetch_assoc($title_result)) {
+    $competition_title = "Participants for '" . htmlspecialchars($title_row['title']) . "'";
+}
 ?>
-<h2>Users</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><?php echo $competition_title; ?></h2>
+    <a href="/college-competition-portal/admin/view-competition.php" class="btn btn-secondary">Back to Competitions</a>
+</div>
+
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -32,16 +46,18 @@ requireAdminLogin();
 
                     echo "<tr>
 
-                            <td>" . $row['userId'] . "</td>
-                            <td>" . $row['username'] . "</td>
-                            <td>" . $row['competitionTitle'] . "</td>
-                            <td>" . $row['joinDate'] . "</td>
+                            <td>" . htmlspecialchars($row['userId']) . "</td>
+                            <td>" . htmlspecialchars($row['username']) . "</td>
+                            <td>" . htmlspecialchars($row['competitionTitle']) . "</td>
+                            <td>" . htmlspecialchars($row['joinDate']) . "</td>
                       
                         </tr>";
                 }
+            } else {
+                echo "<div class='alert alert-info'>No participants found</div>";
             }
         } else {
-            echo "Failed to fetch records " . mysqli_error($conn);
+            echo "<div class='alert alert-danger'>Failed to fetch records: " . mysqli_error($conn) . "</div>";
         }
         ?>
     </tbody>

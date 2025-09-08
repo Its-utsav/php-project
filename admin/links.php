@@ -1,10 +1,10 @@
 <?php
 include("../includes/header.php");
-
+include("../includes/functions.php");
 $email = $_SESSION['admin_email'];
 
 if (!$email) {
-    redirect("./college-competition-portal/");
+    redirect("/college-competition-portal/", 10);
 }
 
 ?>
@@ -16,13 +16,13 @@ if (!$email) {
         <a href="/college-competition-portal" class="btn btn-outline-primary  py-2">Home</a>
     </li>
     <li class="m-2">
-        <a href="/college-competition-portal/admin/competition-form.php" class="btn btn-outline-primary  py-2">Add Competitions</a>
+        <a href="/college-competition-portal/admin/competition-form.php" class="btn btn-outline-primary py-2">Add Competitions</a>
     </li>
     <li class="m-2">
-        <a href="/college-competition-portal/admin/view-competition.php" class="btn btn-outline-primary  py-2">See Competitions</a>
+        <a href="/college-competition-portal/admin/view-competition.php" class="btn btn-outline-primary py-2">See Competitions</a>
     </li>
     <li class="m-2">
-        <a href="/college-competition-portal/admin/view-users.php" class="btn btn-outline-primary  py-2">View Users</a>
+        <a href="/college-competition-portal/admin/view-users.php" class="btn btn-outline-primary py-2">View Users</a>
     </li>
 
     <?php

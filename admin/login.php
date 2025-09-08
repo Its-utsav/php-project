@@ -1,10 +1,59 @@
 <?php
+require("../includes/functions.php");
 include("../includes/header.php");
+const ADMIN_EMAIL = "admin@ccp.com";
+const ADMIN_PASSWORD = "abcd@admin";
+
+$error_message = '';
+
+// normal user no
+if (isset($_SESSION['user_id'])) {
+  redirect("/college-competition-portal/users/dashboard.php", 0);
+  exit();
+}
+
+// Ialready login bye bye
+if (isset($_SESSION['admin_email'])) {
+  redirect("/college-competition-portal/admin/links.php", 0);
+  exit();
+}
+
+if (isset($_POST['admin-login'])) {
+  $email = trim($_POST['email']);
+  $password = $_POST['password'];
+
+  if (empty($email) || empty($password)) {
+    $error_message = "Email and password fields are required.";
+  } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $error_message = "Invalid email.";
+  } elseif ($email === ADMIN_EMAIL && $password === ADMIN_PASSWORD) {
+    echo  "login successful";
+    $_SESSION['admin_email'] = ADMIN_EMAIL;
+    var_dump($_SESSION);
+    redirect("../admin/links.php", 3);
+    exit();
+  } else {
+
+    $error_message = "Invalid admin credentials. Please try again.";
+  }
+}
+
+
 ?>
 
 <div class="container">
   <h1 class="text-center">Login as <b>admin</b></h1>
-  <form id="form" action="../server/admin.php" method="POST">
+
+  <?php
+
+  if (!empty($error_message)):
+  ?>
+    <div class="alert alert-danger" role="alert">
+      <?php echo htmlspecialchars($error_message); ?>
+    </div>
+  <?php endif; ?>
+
+  <form id="form" action="" method="POST">
     <!-- email -->
     <div class="form-group">
       <label for="email">Email:</label>
@@ -13,8 +62,9 @@ include("../includes/header.php");
         class="form-control"
         id="email"
         name="email"
-        placeholder="Enter Your Email" />
-      <p id="emailwarn" class="invalid-feedback" style="display: none"></p>
+        placeholder="Enter Your Email"
+        required />
+      <div id="email-feedback" class="invalid-feedback"></div>
     </div>
 
     <!-- password -->
@@ -25,10 +75,11 @@ include("../includes/header.php");
         class="form-control"
         id="password"
         name="password"
-        maxlength="10"
-        placeholder="Enter Password" />
-      <p id="passwarn" class="invalid-feedback" style="display: none"></p>
+        placeholder="Enter Password"
+        required />
+      <div id="pass-feedback" class="invalid-feedback"></div>
     </div>
+
     <input type="hidden" name="admin-login" value="true" />
     <!-- button -->
     <div class="form-group">
@@ -39,43 +90,48 @@ include("../includes/header.php");
 </div>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    var form = document.getElementById("form");
+    const form = document.getElementById("form");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
 
-    form.addEventListener("submit", validateForm);
+    const emailFeedback = document.getElementById("email-feedback");
+    const passFeedback = document.getElementById("pass-feedback");
 
-    function validateForm(e) {
-      e.preventDefault();
-
-      let emailWarn = document.getElementById("emailwarn");
-      let passWarn = document.getElementById("passwarn");
-
-      emailWarn.style.display = "none";
-      passWarn.style.display = "none";
-
-      let email = document.getElementById("email").value;
-      let password = document.getElementById("password").value;
-
-      let email_at = email.indexOf("@");
-      let email_dot = email.lastIndexOf(".");
-
-      let valid = true;
-      if (email_at < 1 || email_dot - email_at < 2) {
-        emailWarn.textContent = "Enter a valid email.";
-        emailWarn.style.display = "block";
-        valid = false;
-      }
-
-      if (password.length < 4) {
-        passWarn.textContent =
-          "Password must be at least 4 characters long.";
-        passWarn.style.display = "block";
-        valid = false;
-      }
-
-      if (valid) {
-        form.submit();
+    function validateEmail() {
+      const email = emailInput.value.trim();
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        emailFeedback.textContent = "Please enter a valid email address.";
+        emailInput.classList.add("is-invalid");
+        return false;
+      } else {
+        emailInput.classList.remove("is-invalid");
+        return true;
       }
     }
+
+    function validatePassword() {
+      const password = passwordInput.value;
+      if (password.length < 4) {
+        passFeedback.textContent = "Password must be at least 4 characters long.";
+        passwordInput.classList.add("is-invalid");
+        return false;
+      } else {
+        passwordInput.classList.remove("is-invalid");
+        return true;
+      }
+    }
+
+
+    emailInput.addEventListener("input", validateEmail);
+    passwordInput.addEventListener("input", validatePassword);
+
+
+    form.addEventListener("submit", function(e) {
+      if (!validateEmail() || !validatePassword()) {
+        e.preventDefault();
+      }
+    });
   });
 </script>
 

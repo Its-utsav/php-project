@@ -4,24 +4,80 @@ include("../includes/header.php");
 include("../includes/functions.php");
 
 requireAdminLogin();
-if (isset($_GET['competitionID'])) {
-    $id = $_GET['competitionID'];
-    $q = "SELECT * FROM competitions WHERE id = $id";
-    $result =  mysqli_query($conn, $q);
 
-    if ($result) {
-        $row = mysqli_fetch_array($result);
-        $id = $row['id'];
+
+$isUpdate = isset($_GET['competitionID']) && is_numeric($_GET['competitionID']);
+$competitionID = $isUpdate ? $_GET['competitionID'] : null;
+
+$title = $description = $date = $time = '';
+$title_err = $description_err = $date_err = $time_err = '';
+$form_message = '';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $competitionID = $_POST['id'] ?? null;
+    // for update id 
+    //for new it will be null 
+    $title = trim($_POST['title']);
+    $description = trim($_POST['description']);
+    $date = $_POST['date'];
+    $time = $_POST['time'];
+
+    if (strlen($title) < 3) {
+        $title_err = "Title must be at least 3 characters.";
+    }
+
+    if (strlen($description) < 5) {
+        $description_err = "Description must be at least 5 characters.";
+    }
+
+    // not in past
+    if (empty($date) || strtotime($date) < strtotime(date("Y-m-d"))) {
+        $date_err = "Date cannot be in the past.";
+    }
+    if (empty($time)) {
+        $time_err = "Please select a time.";
+    }
+    if (empty($title_err) && empty($description_err) && empty($date_err) && empty($time_err)) {
+        $sql = "";
+
+        if ($competitionID) {
+
+            $sql = "UPDATE competitions SET title = '$title', description = '$description', date = '$date', time = '$time' WHERE id = $competitionID";
+
+            $success_message = "Competition updated successfully!";
+        } else {
+
+            $sql = "INSERT INTO competitions (title, description, date, time) VALUES ('$title', '$description', '$date', '$time')";
+            $success_message = "Competition added successfully!";
+        }
+
+        if (mysqli_query($conn, $sql)) {
+
+            redirect("/college-competition-portal/admin/view-competition.php", 0);
+            exit();
+        } else {
+            // Display a general error if the query fails
+            $form_message = "Database error: " . mysqli_error($conn);
+        }
+    }
+} else if ($isUpdate) {
+    $sql = "SELECT title, description, date, time FROM competitions WHERE id = $competitionID";
+    $result = mysqli_query($conn, $sql);
+
+    if ($row = mysqli_fetch_assoc($result)) {
         $title = $row['title'];
         $description = $row['description'];
         $date = $row['date'];
         $time = $row['time'];
+    } else {
+        die("Error: Competition with this ID was not found.");
     }
 }
+
 ?>
 <h2>
     <?php
-    if (isset($_GET['competitionID'])) {
+    if ($isUpdate) {
         echo  "Update";
     } else {
         echo "Add";
@@ -29,65 +85,75 @@ if (isset($_GET['competitionID'])) {
     ?>
 
     Competition</h2>
-<form action="../../server/admin.php" method="post">
+<?php
+
+if (!empty($error_message)) :
+?>
+    <div class="alert alert-danger" role="alert">
+        <?php echo htmlspecialchars($error_message); ?>
+    </div>
+<?php endif; ?>
+<!-- <form action="../../server/admin.php" method="post"> -->
+<form action="" method="post">
     <div class="form-group">
         <label for="title">Title:</label>
         <input type="text" class="form-control" id="title" name="title" required
             <?php
-            if (isset($_GET['competitionID'])) {
+            if ($isUpdate) {
                 echo "value="  . htmlspecialchars($title);
             }
             ?>>
-        <p id="titlewarn" class="invalid-feedback" style="display: none"></p>
+        <p id="titlewarn" class="invalid-feedback" style="display: none"><?php echo $title_err; ?></p>
     </div>
     <div class="form-group">
         <label for="description">Description:</label>
         <textarea class="form-control" id="description" name="description" rows="3">
             <?php
-            if (isset($_GET['competitionID'])) {
+            if ($isUpdate) {
                 echo  trim(htmlspecialchars($description));
             }
             ?>
             </textarea>
-        <p id="descwarn" class="invalid-feedback" style="display: none"></p>
+        <p id="descwarn" class="invalid-feedback" style="display: none"><?php echo $description_err; ?></p>
     </div>
     <div class="form-group">
         <label for="date">Date:</label>
         <input type="date" class="form-control" id="date" name="date"
             <?php
-            if (isset($_GET['competitionID'])) {
+            if ($isUpdate) {
                 echo "value="  . htmlspecialchars($date);
             }
             ?>>
-        <p id="datewarn" class="invalid-feedback" style="display: none"></p>
+        <p id="datewarn" class="invalid-feedback" style="display: none"><?php echo $date_err; ?></p>
     </div>
     <div class="form-group">
         <label for="time">Time:</label>
         <input type="time" class="form-control" id="time" name="time"
             <?php
-            if (isset($_GET['competitionID'])) {
+            if ($isUpdate) {
                 echo "value="  . htmlspecialchars($time);
             }
             ?>>
-        <p id="timewarn" class="invalid-feedback" style="display: none"></p>
+        <p id="timewarn" class="invalid-feedback" style="display: none"><?php echo $time_err; ?></p>
     </div>
     <input type="hidden" value="true"
 
         <?php
-        if (isset($_GET['competitionID'])) {
+        if ($isUpdate) {
             echo  'name="admin-update-competition"';
         } else {
             echo 'name="admin-add-competition"';
         }
         ?> />
     <?php
-    if (isset($_GET['competitionID'])) {
-        echo '<input type="hidden" value=' . htmlspecialchars($id) . ' name="id"/>';
+
+    if ($isUpdate) {
+        echo '<input type="hidden" value="' . htmlspecialchars($competitionID) . '" name="id"/>';
     }
     ?>
     <button type="submit" class="btn btn-primary">
         <?php
-        if (isset($_GET['competitionID'])) {
+        if ($isUpdate) {
             echo  "Update";
         } else {
             echo "Add";
@@ -96,7 +162,6 @@ if (isset($_GET['competitionID'])) {
         competition
     </button>
 </form>
-
 <script>
     const minDate = new Date().toISOString().split('T')[0];
     document.getElementById("date").setAttribute('min', minDate);
@@ -171,6 +236,7 @@ if (isset($_GET['competitionID'])) {
         });
     });
 </script>
+
 
 <?php
 include("../includes/footer.php");
