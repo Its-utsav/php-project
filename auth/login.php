@@ -2,6 +2,10 @@
 include("../includes/header.php");
 require("../config/db.php");
 require("../includes/functions.php");
+if (isLoggedIn()) {
+  redirect("/college-competition-portal", 0);
+}
+
 $error_message = '';
 
 if (isset($_POST['login'])) {
@@ -10,6 +14,8 @@ if (isset($_POST['login'])) {
 
   if (empty($email) || empty($password)) {
     $error_message = "Email and password are required.";
+  } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $error_message = "Invalid email.";
   } else {
     $q = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
 
@@ -66,7 +72,7 @@ if (isset($_POST['login'])) {
         placeholder="Enter Password" />
       <p id="passwarn" class="invalid-feedback" style="display: none"></p>
     </div>
-    <input type="hidden" name="login" value="true" />
+    <!-- <input type="hidden" name="login" value="true" /> -->
     <!-- button -->
     <div class="form-group">
       <button name="login" type="submit" class="btn btn-primary">Login</button>
@@ -84,7 +90,7 @@ if (isset($_POST['login'])) {
 
     emailInput.addEventListener("change", function() {
       const email = emailInput.value.trim();
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
       if (!emailRegex.test(email)) {
         emailWarn.textContent = "Enter a valid email.";
