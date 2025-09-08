@@ -36,9 +36,11 @@ requireLogin();
                     <td>" . htmlspecialchars($row['created_at']) . "</td>    
                   </tr>";
           }
+        } else {
+          echo "<div class='alert alert-info'>You are nor take part in any competition</div>";
         }
       } else {
-        echo "Failed to fetch records " . mysqli_error($conn);
+        echo "<div class='alert alert-danger'>Failed to fetch records: " . mysqli_error($conn) . "</div>";
       }
       ?>
     </tbody>
