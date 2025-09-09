@@ -10,7 +10,7 @@ $isUpdate = isset($_GET['competitionID']) && is_numeric($_GET['competitionID']);
 $competitionID = $isUpdate ? $_GET['competitionID'] : null;
 
 $title = $description = $date = $time = '';
-$title_err = $description_err = $date_err = $time_err = '';
+$title_err = $description_err = $date_err = $time_err = $banner_err = "";
 $form_message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -21,7 +21,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $description = trim($_POST['description']);
     $date = $_POST['date'];
     $time = $_POST['time'];
+    $current_banner = $_POST['current_banner'] ?? '';
+    $banner_name_to_save = $current_banner ?? "";
 
+
+    if (isset($_FILES["banner"]) && $_FILES["banner"]["error"] == 0) {
+        $upload_dir = "../uploads/";
+        $allowed_types = ['image/jpeg', 'image/png'];
+        $max_size = 10 * 1024 * 1024;
+
+        $file_type = $_FILES["banner"]["type"];
+        $file_size = $_FILES["banner"]["size"];
+
+
+        if (!in_array($file_type, $allowed_types)) {
+            $banner_err = "Invalid file type. Only JPG and PNG are allowed.";
+        } elseif ($file_size > $max_size) {
+            $banner_err = "File is too large. Maximum size is 10 MB.";
+        } else {
+
+            $file_extension = pathinfo($_FILES["banner"]["name"], PATHINFO_EXTENSION);
+            $unique_filename = time() . '_' . uniqid() . '.' . $file_extension;
+            $target_file = $upload_dir . $unique_filename;
+
+            if (move_uploaded_file($_FILES["banner"]["tmp_name"], $target_file)) {
+
+                $banner_name_to_save = $unique_filename;
+
+                if (!empty($current_banner) && file_exists($upload_dir . $current_banner)) {
+                    unlink($upload_dir . $current_banner);
+                }
+            } else {
+                $banner_err = "Sorry, there was an error uploading your file.";
+            }
+        }
+    }
     if (strlen($title) < 3) {
         $title_err = "Title must be at least 3 characters.";
     }
@@ -42,12 +76,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($competitionID) {
 
-            $sql = "UPDATE competitions SET title = '$title', description = '$description', date = '$date', time = '$time' WHERE id = $competitionID";
+            $sql = "UPDATE competitions SET title = '$title', description = '$description', date = '$date', time = '$time', banner = '$banner_name_to_save' WHERE id = $competitionID";
 
             $success_message = "Competition updated successfully!";
         } else {
 
-            $sql = "INSERT INTO competitions (title, description, date, time) VALUES ('$title', '$description', '$date', '$time')";
+            $sql = "INSERT INTO competitions (title, description, date, time, banner) VALUES ('$title', '$description', '$date', '$time', '$banner_name_to_save')";
             $success_message = "Competition added successfully!";
         }
 
@@ -56,12 +90,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             redirect("/college-competition-portal/admin/view-competition.php", 0);
             exit();
         } else {
-            // Display a general error if the query fails
+
             $form_message = "Database error: " . mysqli_error($conn);
         }
     }
 } else if ($isUpdate) {
-    $sql = "SELECT title, description, date, time FROM competitions WHERE id = $competitionID";
+    $sql = "SELECT title, description, date, time,banner FROM competitions WHERE id = $competitionID";
     $result = mysqli_query($conn, $sql);
 
     if ($row = mysqli_fetch_assoc($result)) {
@@ -69,6 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $description = $row['description'];
         $date = $row['date'];
         $time = $row['time'];
+        $current_banner = $row['banner'] ?? "";
     } else {
         die("Error: Competition with this ID was not found.");
     }
@@ -94,7 +129,7 @@ if (!empty($error_message)) :
     </div>
 <?php endif; ?>
 <!-- <form action="../../server/admin.php" method="post"> -->
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label for="title">Title:</label>
         <input type="text" class="form-control" id="title" name="title" required
@@ -135,6 +170,20 @@ if (!empty($error_message)) :
             }
             ?>>
         <p id="timewarn" class="invalid-feedback" style="display: none"><?php echo $time_err; ?></p>
+    </div>
+
+    <!-- banner -->
+    <div class="form-group">
+        <label for="banner">Competition Banner</label>
+        <?php if ($isUpdate && !empty($current_banner)): ?>
+            <div class="mb-2">
+                <p>Current Banner:</p>
+                <img src="/college-competition-portal/uploads/<?php echo htmlspecialchars($current_banner); ?>" alt="Current Banner" style="max-width: 300px; height: auto;">
+            </div>
+            <p><small>Upload a new file below to replace the current banner.</small></p>
+        <?php endif; ?>
+        <input type="file" class="form-control-file <?php echo (!empty($banner_err)) ? 'is-invalid' : ''; ?>" id="banner" name="banner">
+        <div class="invalid-feedback d-block"><?php echo $banner_err; ?></div>
     </div>
     <input type="hidden" value="true"
 
