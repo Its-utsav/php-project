@@ -29,7 +29,7 @@ if (isset($_POST['admin-login'])) {
   } elseif ($email === ADMIN_EMAIL && $password === ADMIN_PASSWORD) {
     echo  "login successful";
     $_SESSION['admin_email'] = ADMIN_EMAIL;
-    var_dump($_SESSION);
+    // var_dump($_SESSION);
     redirect("../admin/links.php", 3);
     exit();
   } else {
