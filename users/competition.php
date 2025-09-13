@@ -35,19 +35,28 @@ $q .= " ORDER BY date ASC";
       <form action="" method="GET" class="form-inline">
         <div class="form-group mr-2">
           <label for="filter_month" class="mr-2">Select Month:</label>
+
           <select class="form-control" name="filter_month" id="filter_month">
             <option value="">All Months</option>
-            <?php
-            for ($i = 1; $i <= 12; $i++) {
-              $month_name = date("F", mktime(0, 0, 0, $i, 10));
-              $selected = ($filter_month == $i) ? 'selected' : '';
-              echo "<option value='$i' $selected>" . $month_name . "</option>";
-            }
-            ?>
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
           </select>
+
         </div>
-        <button type="submit" class="btn btn-primary mr-2">Apply Filter</button>
-        <a href="competition.php" class="btn btn-secondary">Clear Filter</a>
+        <div class="">
+          <button type="submit" class="btn btn-primary mr-2">Apply Filter</button>
+          <a href="competition.php" class="btn btn-secondary">Clear Filter</a>
+        </div>
       </form>
     </div>
   </div>

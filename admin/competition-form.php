@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($time)) {
         $time_err = "Please select a time.";
     }
-    if (empty($title_err) && empty($description_err) && empty($date_err) && empty($time_err)) {
+    if (empty($title_err) && empty($description_err) && empty($date_err) && empty($time_err) && empty($banner_err)) {
         $sql = "";
 
         if ($competitionID) {
@@ -122,10 +122,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     Competition</h2>
 <?php
 
-if (!empty($error_message)) :
+if (!empty($form_message)) :
 ?>
     <div class="alert alert-danger" role="alert">
-        <?php echo htmlspecialchars($error_message); ?>
+        <?php echo htmlspecialchars($form_message); ?>
     </div>
 <?php endif; ?>
 <!-- <form action="../../server/admin.php" method="post"> -->
@@ -135,7 +135,7 @@ if (!empty($error_message)) :
         <input type="text" class="form-control" id="title" name="title" required
             <?php
             if ($isUpdate) {
-                echo "value="  . htmlspecialchars($title);
+                echo 'value="'  . htmlspecialchars($title) . '"';
             }
             ?>>
         <p id="titlewarn" class="invalid-feedback" style="display: none"><?php echo $title_err; ?></p>
@@ -143,11 +143,11 @@ if (!empty($error_message)) :
     <div class="form-group">
         <label for="description">Description:</label>
         <textarea class="form-control" id="description" name="description" rows="3">
-            <?php
-            if ($isUpdate) {
-                echo  trim(htmlspecialchars($description));
-            }
-            ?>
+        <?php
+        if ($isUpdate) {
+            echo  trim(htmlspecialchars($description));
+        }
+        ?> 
             </textarea>
         <p id="descwarn" class="invalid-feedback" style="display: none"><?php echo $description_err; ?></p>
     </div>
@@ -182,7 +182,7 @@ if (!empty($error_message)) :
             </div>
             <p><small>Upload a new file below to replace the current banner.</small></p>
         <?php endif; ?>
-        <input type="file" class="form-control-file <?php echo (!empty($banner_err)) ? 'is-invalid' : ''; ?>" id="banner" name="banner">
+        <input type="file" class="form-control-file <?php echo (!empty($banner_err)) ? 'is-invalid' : ''; ?>" id="banner" name="banner" required>
         <div class="invalid-feedback d-block"><?php echo $banner_err; ?></div>
     </div>
     <input type="hidden" value="true"
@@ -212,9 +212,6 @@ if (!empty($error_message)) :
     </button>
 </form>
 <script>
-    const minDate = new Date().toISOString().split('T')[0];
-    document.getElementById("date").setAttribute('min', minDate);
-
     document.addEventListener("DOMContentLoaded", function() {
         const titleInput = document.getElementById("title");
         const descInput = document.getElementById("description");

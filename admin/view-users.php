@@ -6,7 +6,13 @@ include("../includes/functions.php");
 requireAdminLogin();
 ?>
 <h2>Users</h2>
-<table class="table table-bordered">
+
+<?php
+$q = "SELECT id, name, email, phone_no, gender, created_at FROM users ORDER BY id DESC";
+$result =  mysqli_query($conn, $q);
+
+if ($result) {
+    echo '<table class="table table-bordered">
     <thead>
         <tr>
             <th scope="col">Id</th>
@@ -17,15 +23,10 @@ requireAdminLogin();
             <th scope="col">Created at</th>
         </tr>
     </thead>
-    <tbody>
-        <?php
-        $q = "SELECT id, name, email, phone_no, gender, created_at FROM users ORDER BY id DESC";
-        $result =  mysqli_query($conn, $q);
-
-        if ($result) {
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_array($result)) {
-                    echo "<tr>
+    <tbody>';
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_array($result)) {
+            echo "<tr>
                             <td>" . htmlspecialchars($row['id']) . "</td>
                             <td>" . htmlspecialchars($row['name']) . "</td>
                             <td>" . htmlspecialchars($row['email']) . "</td>
@@ -33,16 +34,15 @@ requireAdminLogin();
                             <td>" . htmlspecialchars($row['gender']) . "</td>
                             <td>" . htmlspecialchars($row['created_at']) . "</td>
                         </tr>";
-                }
-            } else {
-                echo '<tr><td colspan="6" class="text-center">No users have registered yet.</td></tr>';
-            }
-        } else {
-            echo '<tr><td colspan="6" class="text-center text-danger">Failed to fetch records: ' . mysqli_error($conn) . '</td></tr>';
         }
-        ?>
-    </tbody>
-</table>
+        echo '</tbody></table>';
+    } else {
+        echo '<tr><td colspan="6" class="text-center">No users have registered yet.</td></tr>';
+    }
+} else {
+    echo '<tr><td colspan="6" class="text-center text-danger">Failed to fetch records: ' . mysqli_error($conn) . '</td></tr>';
+}
+?>
 
 
 

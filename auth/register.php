@@ -1,7 +1,7 @@
 <?php
 require("../config/db.php");
 require("../includes/functions.php");
-
+include("../includes/header.php");
 
 $name = $email = $phone_no = $gender = "";
 $name_err = $email_err = $phone_err = $pass_err = $gender_err = $form_message = "";
@@ -76,7 +76,7 @@ if (isset($_POST['register'])) {
   }
 }
 
-include("../includes/header.php");
+
 ?>
 <div class="container">
   <h1 class="text-center">Registration form</h1>

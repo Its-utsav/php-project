@@ -19,7 +19,20 @@ if ($title_row = mysqli_fetch_assoc($title_result)) {
     <a href="/college-competition-portal/admin/view-competition.php" class="btn btn-secondary">Back to Competitions</a>
 </div>
 
-<table class="table table-bordered">
+
+<?php
+
+$competitionID = $_GET['competitionID'];
+$q = "SELECT 
+            users.name as username,
+            users.id as userId,
+            competitions.title as competitionTitle,
+            registrations.created_at as joinDate
+         FROM registrations JOIN users ON registrations.user_id = users.id JOIN competitions ON registrations.competition_id = competitions.id WHERE competitions.id = $competitionID";
+$result =  mysqli_query($conn, $q);
+
+if ($result) {
+    echo '<table class="table table-bordered">
     <thead>
         <tr>
             <th scope="col">Id</th>
@@ -29,22 +42,11 @@ if ($title_row = mysqli_fetch_assoc($title_result)) {
 
         </tr>
     </thead>
-    <tbody>
-        <?php
-        $competitionID = $_GET['competitionID'];
-        $q = "SELECT 
-            users.name as username,
-            users.id as userId,
-            competitions.title as competitionTitle,
-            registrations.created_at as joinDate
-         FROM registrations JOIN users ON registrations.user_id = users.id JOIN competitions ON registrations.competition_id = competitions.id WHERE competitions.id = $competitionID";
-        $result =  mysqli_query($conn, $q);
+    <tbody>';
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_array($result)) {
 
-        if ($result) {
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_array($result)) {
-
-                    echo "<tr>
+            echo "<tr>
 
                             <td>" . htmlspecialchars($row['userId']) . "</td>
                             <td>" . htmlspecialchars($row['username']) . "</td>
@@ -52,16 +54,16 @@ if ($title_row = mysqli_fetch_assoc($title_result)) {
                             <td>" . htmlspecialchars($row['joinDate']) . "</td>
                       
                         </tr>";
-                }
-            } else {
-                echo "<div class='alert alert-info'>No participants found</div>";
-            }
-        } else {
-            echo "<div class='alert alert-danger'>Failed to fetch records: " . mysqli_error($conn) . "</div>";
         }
-        ?>
-    </tbody>
-</table>
+        echo '</tbody></table>';
+    } else {
+        echo "<div class='alert alert-info'>No participants found</div>";
+    }
+} else {
+    echo "<div class='alert alert-danger'>Failed to fetch records: " . mysqli_error($conn) . "</div>";
+}
+?>
+
 
 <?php
 include("../includes/footer.php");
