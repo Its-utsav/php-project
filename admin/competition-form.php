@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_FILES["banner"]) && $_FILES["banner"]["error"] == 0) {
         $upload_dir = "../uploads/";
-        $allowed_types = ['image/jpeg', 'image/png'];
+        $allowed_types = ['image/jpeg', 'image/png', 'image/jpg'];
         $max_size = 10 * 1024 * 1024;
 
         $file_type = $_FILES["banner"]["type"];
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         if (!in_array($file_type, $allowed_types)) {
-            $banner_err = "Invalid file type. Only JPG and PNG are allowed.";
+            $banner_err = "Invalid file type. Only JPEG , JPG and PNG are allowed.";
         } elseif ($file_size > $max_size) {
             $banner_err = "File is too large. Maximum size is 10 MB.";
         } else {
@@ -76,8 +76,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($competitionID) {
 
-            $sql = "UPDATE competitions SET title = '$title', description = '$description', date = '$date', time = '$time', banner = '$banner_name_to_save' WHERE id = $competitionID";
-
+            $sql = "UPDATE competitions SET title = '$title', description = '$description', date = '$date', time = '$time' ";
+            // admin uploaded new banner AND new banner should not same as prevoius one 
+            if (!empty($banner_name_to_save) && $current_banner !== $banner_name_to_save) {
+                $sql .= ", banner = '$banner_name_to_save'";
+            }
+            $sql .= " WHERE id = $competitionID";
             $success_message = "Competition updated successfully!";
         } else {
 
@@ -142,13 +146,7 @@ if (!empty($form_message)) :
     </div>
     <div class="form-group">
         <label for="description">Description:</label>
-        <textarea class="form-control" id="description" name="description" rows="3">
-        <?php
-        if ($isUpdate) {
-            echo  trim(htmlspecialchars($description));
-        }
-        ?> 
-            </textarea>
+        <textarea class="form-control" id="description" name="description" rows="3"><?php echo $isUpdate ? trim(htmlspecialchars($description)) : ""; ?></textarea>
         <p id="descwarn" class="invalid-feedback" style="display: none"><?php echo $description_err; ?></p>
     </div>
     <div class="form-group">
@@ -182,7 +180,7 @@ if (!empty($form_message)) :
             </div>
             <p><small>Upload a new file below to replace the current banner.</small></p>
         <?php endif; ?>
-        <input type="file" class="form-control-file <?php echo (!empty($banner_err)) ? 'is-invalid' : ''; ?>" id="banner" name="banner" required>
+        <input type="file" class="form-control-file <?php echo (!empty($banner_err)) ? 'is-invalid' : ''; ?>" id="banner" name="banner">
         <div class="invalid-feedback d-block"><?php echo $banner_err; ?></div>
     </div>
     <input type="hidden" value="true"

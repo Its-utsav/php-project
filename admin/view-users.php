@@ -12,7 +12,7 @@ $q = "SELECT id, name, email, phone_no, gender, created_at FROM users ORDER BY i
 $result =  mysqli_query($conn, $q);
 
 if ($result) {
-    echo '<table class="table table-bordered">
+    echo '  <table class="table  table-hover">
     <thead>
         <tr>
             <th scope="col">Id</th>

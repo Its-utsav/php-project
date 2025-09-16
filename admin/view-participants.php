@@ -32,18 +32,18 @@ $q = "SELECT
 $result =  mysqli_query($conn, $q);
 
 if ($result) {
-    echo '<table class="table table-bordered">
+
+    if (mysqli_num_rows($result) > 0) {
+        echo '<table class="table table-bordered">
     <thead>
         <tr>
             <th scope="col">Id</th>
             <th scope="col">Name</th>
             <th scope="col">competition Title</th>
             <th scope="col">joinDate</th>
-
         </tr>
     </thead>
     <tbody>';
-    if (mysqli_num_rows($result) > 0) {
         while ($row = mysqli_fetch_array($result)) {
 
             echo "<tr>

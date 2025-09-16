@@ -19,8 +19,7 @@ requireLogin();
 
   if ($result) {
     if (mysqli_num_rows($result) > 0) {
-      while ($row = mysqli_fetch_array($result)) {
-        echo '<table class="table table-bordered">
+      echo ' <table class="table  table-hover">
         <thead>
           <tr>
             <th scope="col">title</th>
@@ -30,6 +29,7 @@ requireLogin();
           </tr>
         </thead>
         <tbody>';
+      while ($row = mysqli_fetch_array($result)) {
         echo "<tr>
                     <td>" . htmlspecialchars($row['title']) . "</td>
                     <td>" . htmlspecialchars($row['date']) . "</td>
