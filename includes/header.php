@@ -7,6 +7,7 @@ session_start();
 <head>
   <title>Competitions - My System</title>
   <link rel="stylesheet" href="/college-competition-portal/bootstrap/bootstrap.min.css" />
+  <link rel="stylesheet" href="/college-competition-portal/assets/css/styles.css">
 </head>
 
 <body>
@@ -17,6 +18,7 @@ session_start();
           <ul class="list-unstyled d-flex flex-wrap justify-content-center">
             <li class="m-2">
               <a href="/college-competition-portal" class="btn btn-outline-primary  py-2">Home</a>
+              <!-- <a href="/college-competition-portal" class="btn  py-2">Home</a> -->
             </li>
 
             <?php if (!isset($_SESSION['admin_email'])): ?>
