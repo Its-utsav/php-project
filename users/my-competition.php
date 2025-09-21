@@ -13,7 +13,12 @@ requireLogin();
 
   $user_id = $_SESSION['user_id'];
 
-  $q = "SELECT * from registrations join competitions on registrations.competition_id = competitions.id  where registrations.user_id  = $user_id";
+  $q = "SELECT 
+    competitions.title as title,
+    competitions.date as date, 
+    competitions.time as time, 
+    registrations.created_at as join_date
+    from registrations join competitions on registrations.competition_id = competitions.id  where registrations.user_id  = $user_id";
   $result =  mysqli_query($conn, $q);
 
 
@@ -29,12 +34,13 @@ requireLogin();
           </tr>
         </thead>
         <tbody>';
-      while ($row = mysqli_fetch_array($result)) {
+      while ($row = mysqli_fetch_assoc($result)) {
+        // var_dump($row);
         echo "<tr>
                     <td>" . htmlspecialchars($row['title']) . "</td>
                     <td>" . htmlspecialchars($row['date']) . "</td>
                     <td>" . htmlspecialchars($row['time']) . "</td>
-                    <td>" . htmlspecialchars($row['created_at']) . "</td>    
+                    <td>" . htmlspecialchars($row['join_date']) . "</td>    
                   </tr>";
       }
       echo ' </tbody>
