@@ -30,7 +30,7 @@ if (isset($_POST['admin-login'])) {
     echo  "login successful";
     $_SESSION['admin_email'] = ADMIN_EMAIL;
     // var_dump($_SESSION);
-    redirect("../admin/links.php", 3);
+    redirect("../admin/links.php", 1);
     exit();
   } else {
 

@@ -70,4 +70,4 @@ session_start();
   </header>
 
 
-  <main class="container">
+  <main class="container my-2">
