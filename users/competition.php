@@ -3,12 +3,11 @@ require("../config/db.php");
 include("../includes/header.php");
 include("../includes/functions.php");
 requireLogin();
-if (!isset($_SESSION['admin_email'])) {
+if (isset($_SESSION['admin_email'])) {
   redirect("/college-competition-portal/admin/view-competition.php", 0);
 }
 
 $filter_month = null;
-
 
 // month should be be in url
 if (isset($_GET['filter_month']) && is_numeric($_GET['filter_month']) && $_GET['filter_month'] >= 1 && $_GET['filter_month'] <= 12) {
