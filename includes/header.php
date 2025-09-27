@@ -10,7 +10,7 @@ session_start();
   <link rel="stylesheet" href="/college-competition-portal/assets/css/styles.css">
 </head>
 
-<body>
+<body class="text-white">
   <header>
     <nav class="container mt-3">
       <div class="row">

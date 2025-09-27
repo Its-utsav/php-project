@@ -2,6 +2,9 @@
 include("../includes/header.php");
 require("../config/db.php");
 require("../includes/functions.php");
+if ($_SESSION['admin_email']) {
+  redirect("/college-competition-portal/admin/view-competition.php", 0);
+}
 if (isLoggedIn()) {
   redirect("/college-competition-portal", 0);
 }

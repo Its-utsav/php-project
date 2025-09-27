@@ -3,6 +3,9 @@ require("../config/db.php");
 include("../includes/header.php");
 include("../includes/functions.php");
 requireLogin();
+if (!isset($_SESSION['admin_email'])) {
+  redirect("/college-competition-portal/admin/view-competition.php", 0);
+}
 
 $filter_month = null;
 
@@ -29,7 +32,7 @@ $q .= " ORDER BY date ASC";
 <div class="container mt-5">
   <h2 class="mb-4">Competitions</h2>
 
-  <div class="card bg-light my-4">
+  <div class="card bg-light my-4 text-dark">
     <div class="card-body">
       <h5 class="card-title">Filter by Month</h5>
       <form action="" method="GET" class="form-inline">
@@ -69,8 +72,8 @@ $q .= " ORDER BY date ASC";
     if (mysqli_num_rows($result) > 0) {
       while ($row = mysqli_fetch_array($result)) {
 
-        echo "<div class='card mb-4'>
-                    <div class='card-header font-weight-bold'>
+        echo "<div class='card mb-4 text-dark'>
+                    <div class='card-header font-weight-bold '>
                         Competition Date: " . date("l, F d, Y", strtotime($row['date'])) . "
                     </div>
                     <div class='card-body'>
